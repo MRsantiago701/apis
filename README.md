@@ -20,9 +20,5 @@ Presenta un catálogo de contenido multimedia, simulando una plataforma de strea
 - Node.js
 - Express.js
 - JavaScript
-- HTML5
-- CSS3
 
-## Autor
-Máximo Santiago Romero
-TIID-4 Aplicaciones Web Orientadas a Servicios Móviles
+
