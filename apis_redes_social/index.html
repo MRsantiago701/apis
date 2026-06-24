@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feed del Real Madrid (Bluesky)</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            max-width: 650px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            background-color: #f0f2f5; 
+        }
+        h1 { 
+            color: #0a1a3a; 
+            text-align: center; 
+            margin-bottom: 30px;
+        }
+        .post { 
+            background: white; 
+            padding: 20px; 
+            margin-bottom: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+            border-left: 5px solid #0a1a3a;
+        }
+        .author { 
+            font-weight: bold; 
+            color: #0a1a3a; 
+        }
+        .text { 
+            margin-top: 10px; 
+            color: #222; 
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+        .date { 
+            font-size: 9pt; 
+            color: #777; 
+            margin-top: 12px; 
+            text-align: right;
+        }
+        .error-msg {
+            color: #d93025;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Publicaciones del Real Madrid (Bluesky)</h1>
+    <div id="posts">Leyendo el contenido público de la página...</div>
+
+    <script>
+        fetch('http://localhost:3000/api/bluesky')
+            .then(response => {
+                if (!response.ok) throw new Error('Error en el servidor local');
+                return response.json();
+            })
+            .then(data => {
+                const postsContainer = document.getElementById('posts');
+                postsContainer.innerHTML = ''; 
+
+                if (!data.items || data.items.length === 0) {
+                    postsContainer.innerHTML = "<p class='error-msg'>No se pudieron leer publicaciones en este momento.</p>";
+                    return;
+                }
+
+                data.items.forEach(item => {
+                    const postElement = document.createElement('div');
+                    postElement.classList.add('post');
+
+                    const fecha = new Date(item.date).toLocaleDateString('es-ES', {
+                        day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                    });
+
+                    postElement.innerHTML = `
+                        <div class="author">Real Madrid Oficial (@realmadrid.com)</div>
+                        <div class="text">${item.text}</div>
+                        <div class="date">${fecha}</div>
+                    `;
+                    postsContainer.appendChild(postElement);
+                });
+            })
+            .catch(err => {
+                document.getElementById("posts").innerHTML = "<p class='error-msg'>Error al conectar con el backend local.</p>";
+                console.error(err);
+            });
+    </script>
+</body>
+</html>

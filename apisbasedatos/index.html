@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Base de Datos en la Web</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 30px;
+        }
+        h1 {
+            color: #1a252f;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        th {
+            background-color: #34495e;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Calificaciones desde MySQL</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID Estudiante</th>
+                <th>ID Materia</th>
+                <th>Calificación</th>
+                <th>Fecha</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-datos">
+            <tr>
+                <td colspan="4" style="text-align: center;">Cargando datos de la escuela...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // La URL apunta al servidor Node.js que creamos en el Paso 1
+        const urlAPI = 'http://localhost:3000/api/calificaciones';
+
+        fetch(urlAPI)
+            .then(respuesta => respuesta.json())
+            .then(datos => {
+                const cuerpoTabla = document.getElementById('tabla-datos');
+                cuerpoTabla.innerHTML = ''; // Limpiamos la tabla
+
+                // Recorremos las filas que trajo la base de datos
+                datos.forEach(fila => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${fila.id_estudiante}</td>
+                        <td>${fila.id_materia}</td>
+                        <td>${fila.calificacion}</td>
+                        <td>${fila.fecha || '2026-05-30'}</td>
+                    `;
+                    cuerpoTabla.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('tabla-datos').innerHTML = `
+                    <tr><td colspan="4" style="color:red; text-align:center;">Error al conectar con el servidor backend</td></tr>
+                `;
+            });
+    </script>
+</body>
+</html>
